@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>External Job Search | Internship Recruitment</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/external-jobs.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="/">Internship Recruitment</a><nav><a href="/">Internships</a><a href="/external-jobs">External opportunities</a><a href="/reports">Reports &amp; analytics</a></nav></header>
+  <main class="container">
+    <section class="hero compact"><p class="eyebrow">External listings • Adzuna</p><h1>Search jobs across the web</h1><p>Search listings supplied by Adzuna. These results are saved for this search, but they are separate from internships posted in this app. Choose “Apply on source site” to continue on the employer or job-board website.</p></section>
+    <section class="panel">
+      <div class="section-heading"><h2>External job search</h2><p>Enter a role and Canadian location, such as “software intern” and “Toronto”.</p></div>
+      <form id="external-search-form" class="filters"><label>Job keyword<input name="keyword" maxlength="120" required minlength="2" placeholder="e.g. software intern"></label><label>Location<input name="location" maxlength="120" required minlength="2" placeholder="e.g. Toronto, ON"></label><button id="external-search-button" type="submit">Search jobs</button></form>
+      <div class="button-row"><button id="load-saved-search" class="secondary" type="button" hidden>Reload last saved search</button></div>
+      <div id="external-search-message" class="notice" role="status" aria-live="polite">Search results from Adzuna will appear here.</div>
+      <div id="external-job-results" class="cards" aria-live="polite"></div>
+      <p class="adzuna-attribution">Job listings provided by <a href="https://www.adzuna.ca/" target="_blank" rel="noopener noreferrer">Adzuna Canada</a>.</p>
+    </section>
+  </main>
+  <footer>External listings are not stored as app internship postings. Applications are submitted on the source website.</footer>
+</body>
+</html>
