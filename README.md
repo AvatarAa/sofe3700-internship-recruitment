@@ -26,7 +26,7 @@ A Node.js and Express web application connected to the PostgreSQL database built
 2. Copy `.env.example` to `.env` with `Copy-Item .env.example .env`.
 3. Set the PostgreSQL connection values, a private `SESSION_SECRET` with at least 32 characters, and the bootstrap administrator credentials in `.env`. Never commit or share `.env`.
 4. Create an Adzuna developer account and register an application to obtain an App ID and App Key. Put these in the local `.env` as `ADZUNA_APP_ID` and `ADZUNA_APP_KEY`. Do not put them in browser files or send them in chat. Without them, the rest of the portal works; external search reports that it is not configured.
-5. Confirm PostgreSQL is running and the `internship_recruitment` database contains the Phase II tables and ten views.
+5. Create an empty PostgreSQL database named `internship_recruitment`. In pgAdmin, open `phase2_project.sql`, select that database, and execute the script once. It creates the Phase II tables, sample data, and ten views. Do not run it again on a database that already contains the sample data.
 6. Run `npm run check`, then `npm start`; leave the server terminal running.
 7. Open `http://localhost:3000`. Use `http://localhost:3000/external-jobs` for external listings and `http://localhost:3000/reports` for staff reports.
 
