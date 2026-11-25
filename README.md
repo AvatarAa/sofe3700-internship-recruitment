@@ -1,6 +1,6 @@
 # Internship Hub
 
-SOFE 3700U Data Management Systems · Group 16 · Phase III
+SOFE 3700U Data Management Systems · Group 9 · Phase III
 
 Internship Hub is an Express and PostgreSQL application for posting internships, tracking applications and interviews, and reporting on recruitment activity. It builds on the nine tables and ten SQL views from Phase II.
 
