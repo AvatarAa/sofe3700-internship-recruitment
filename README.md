@@ -1,62 +1,83 @@
-# Internship Hub
+# Internship Application and Recruitment Management System — Phase III
 
-SOFE 3700U Data Management Systems · Group 9 · Phase III
+A Node.js and Express REST/JSON application connected to the PostgreSQL database built in Phase II. It provides a student/recruiter portal, PostgreSQL-backed sessions, role-based authorization, validated posting and application CRUD, ten SQL-view reports, search and filtering, Chart.js visualization, CSV and PDF export, and an external weather API integration whose results are saved to PostgreSQL.
 
-Internship Hub is an Express and PostgreSQL application for posting internships, tracking applications and interviews, and reporting on recruitment activity. It builds on the nine tables and ten SQL views from Phase II.
+## Technology
 
-## Run locally on Windows or Linux
+- Node.js 20 or newer and Express 4
+- PostgreSQL 18 with the Phase II schema, sample rows, and ten views
+- `pg` for parameterized PostgreSQL queries and `connect-pg-simple` for persistent sessions
+- Node `crypto.scrypt` for salted password hashing
+- Chart.js for the database-driven application status chart
+- `csv-stringify` for CSV downloads and PDFKit for PDF downloads
+- Open-Meteo Geocoding and Forecast JSON APIs for external location/weather data
 
-1. Install Node.js 24 LTS. Open the extracted `phase3` folder in VS Code and open a terminal.
-2. Run `npm ci`. It downloads the dependencies recorded in `package-lock.json`.
-3. Run `npm start` and open http://127.0.0.1:3000 in a browser. The first run initializes a local PostgreSQL database with PGlite and stores it in `.local-db`. Keep the terminal open. Use Ctrl+C to stop the server.
-4. Run `npm test` from a second terminal to exercise a separate, in-memory database. This leaves the running demo's data intact.
+## Run on Windows or Linux
 
-| Role             | Email                  | Access                                                                            |
-| ---------------- | ---------------------- | --------------------------------------------------------------------------------- |
-| Administrator    | admin@example.com      | Operations and Analytics reports, CSV/PDF downloads, Remotive import              |
-| User · Student   | student1@example.com   | Browse, apply, edit a resume link, withdraw, view your interviews                 |
-| User · Recruiter | recruiter1@example.com | Manage your postings, review your applicants, schedule and maintain interviews    |
-| Guest            | guest@example.com      | Public internship and remote-listing pages. Browsing also works while signed out. |
+1. Open this `phase3_app` folder in VS Code.
+2. In the VS Code terminal, run `npm install`.
+3. Copy `.env.example` to `.env`. In PowerShell, you can run:
 
-The local demo password for all four example accounts is `Phase3Demo2026!`. Recruiter 1 manages Northstar Analytics.
+   ```powershell
+   Copy-Item .env.example .env
+   ```
 
-If port 3000 is busy, create a file named `.env` beside `server.js` with `PORT=3001`, restart, and open http://127.0.0.1:3001. For a new test copy, set `DATA_DIR=./demo-review` in `.env` and restart from the project folder. Each database directory has its own data.
+4. Open `.env` in VS Code. Set `DB_PASSWORD` to your local PostgreSQL password and replace both placeholder passwords with private values. Keep `SESSION_SECRET` at least 32 characters. `BOOTSTRAP_ADMIN_EMAIL` must be an email not already used in the Phase II `app_user` table. Do not share or commit `.env`.
+5. Confirm PostgreSQL is running and that `internship_recruitment` contains the Phase II tables and ten views.
+6. Run `npm run check` to check JavaScript syntax.
+7. Run `npm start` and leave that terminal running. On the first successful startup, the app creates the weather cache table and its index. It also creates the configured administrator account if that email is not already present. It does not replace or change existing accounts.
+8. Open `http://localhost:3000` for the internship portal. Open `http://localhost:3000/reports` and sign in as an administrator or recruiter before running reports and downloading exports.
 
-### Use PostgreSQL with pgAdmin
+If you already have a root `.env` for another version of the project, you may use `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`; the app reads these. It also accepts `DATABASE_URL` if you prefer that format.
 
-Create an empty database such as `internship_phase3` in pgAdmin. Create `.env` beside `server.js` and set these values before running `npm start`.
+## Accounts and roles
 
-```dotenv
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/internship_phase3
-DEMO_PASSWORD=Phase3Demo2026!
-```
+- `ADMIN`: can manage postings, review application activity, and use reports and exports.
+- `RECRUITER`: can manage postings and applications connected to that recruiter ID and use reports and exports.
+- `STUDENT`: can browse postings, submit an application, review their own applications, update its resume link, and withdraw it.
+- `GUEST`: can browse and search open postings, use the weather lookup, and register/sign in. Guests cannot view private application reports or change records.
 
-Replace `YOUR_PASSWORD` with your local PostgreSQL password, URL-encoding reserved characters in that value. Use a dedicated local demo database for the sample accounts. On an empty database, startup runs `sql/phase2.sql`, which contains the original data and view definitions, then applies `sql/phase3.sql`. If connecting to a **copy** of the group's existing Phase II database, startup detects `app_user` and applies the Phase III migration without re-inserting the seed records. It updates the known fictional placeholder password hashes and adds the two demo accounts when `DEMO_PASSWORD` is provided. Existing hashed accounts retain their password. To change the demo password for a fresh run, set it before initializing a new database.
+The Phase II sample password strings such as `demo_hash_student_01` are illustrative placeholders, not real password hashes. Create a new student account through the portal or sign in with the administrator account configured in `.env`. The bootstrap administrator is created only if its email is not already in `app_user`.
 
-The app binds to loopback by default. Keep the sample accounts local. External import needs internet access. The public list remains available after an import error, and each saved listing links to its original Remotive page. If the first keyword yields zero rows, try a broader keyword after the five-minute import cooldown. Saved remote records are historical snapshots and are used for browsing, while applications to those jobs happen on Remotive.
+## Phase III features
 
-## Demo sequence
+- **Authentication:** student registration, login and logout; session IDs are regenerated at login, sessions are stored in PostgreSQL, cookies are HTTP-only and SameSite Lax, and passwords use salted scrypt hashes.
+- **Role access:** API middleware checks administrator, recruiter, and student access. Recruiters can only edit their own postings and applications; students can only manage their own applications.
+- **Validation and error handling:** required fields, email, password length, URLs, IDs, dates, numeric ranges, work modes and database constraints are checked. API errors use JSON with appropriate status codes. SQL uses parameters and report query names are allow-listed.
+- **REST/JSON and CRUD:** GET/POST/PUT/DELETE endpoints manage internship postings and applications. Application status changes are written to the Phase II status-history table in a transaction.
+- **External service:** a weather request uses Open-Meteo Geocoding and Forecast APIs, returns JSON, and saves the returned location and current conditions with the source payload to `weather_observation`. The page can load saved weather results from PostgreSQL.
+- **Frontend:** two web pages; Fetch requests without full page reloads; dynamic registration, login, posting, application, search and weather forms; all ten Phase II views display as HTML tables on the reports page.
+- **Data exploration and exports:** title/company/location search and work-mode filtering; Chart.js graph built from a PostgreSQL application-status query; selected report views download as CSV or PDF.
+- **Database readiness:** PostgreSQL creates the session table and the application creates the weather cache table on startup. The separate `sql_phase3_migration.sql` file contains the equivalent safe, repeatable weather-table migration for review/manual setup.
 
-1. Sign in as recruiter 1. Add an open posting with a future deadline, edit its description, and show that a throwaway posting can be deleted while it has no applications.
-2. Sign out and sign in as student 1. Search for the new title, select a work mode, apply, and confirm the application in Workspace.
-3. Return as recruiter 1. Set the new application to Under Review, add a short note, and schedule an interview.
-4. Sign in as admin. Open Reports and its Analytics tab. Show the application details, latest status audit, chart, and CSV/PDF downloads. Explore Remote listings and, if online, fetch and save Remotive results.
-5. Use a guest or signed-out window to verify that the public catalog is visible and the admin navigation is hidden.
+## Main API routes
 
-## API reference
+| Route | Use |
+|---|---|
+| `GET /api/health` | Check PostgreSQL connection |
+| `GET /api/auth/me` | Current session and role |
+| `POST /api/auth/register` | Create a student account |
+| `POST /api/auth/login`, `POST /api/auth/logout` | Start or end a session |
+| `GET /api/postings`, `GET /api/postings/:id` | Search or read open postings |
+| `POST /api/postings`, `PUT /api/postings/:id`, `DELETE /api/postings/:id` | Recruiter/admin posting CRUD |
+| `GET /api/applications`, `POST /api/applications` | Read accessible applications or apply |
+| `PUT /api/applications/:id`, `DELETE /api/applications/:id` | Update or delete an authorized application |
+| `GET /api/views/:name` | Execute an allow-listed Phase II view (administrator/recruiter) |
+| `GET /api/views/:name.csv`, `GET /api/views/:name.pdf` | Export the selected view (administrator/recruiter) |
+| `POST /api/weather`, `GET /api/weather?location=Toronto%2C%20ON` | Fetch and save weather, then read saved results |
 
-Send JSON bodies with `Content-Type: application/json` for POST, PUT, and DELETE. Browser requests carry the session cookie after sign-in.
+## Verification before submission
 
-| Route                                        | Methods              | Purpose                                                                                         |
-| -------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------- |
-| `/api/login`, `/api/logout`, `/api/session`  | POST, POST, GET      | Start, end, or inspect a session                                                                |
-| `/api/postings`, `/api/postings/:id`         | GET/POST, PUT/DELETE | Public listings, recruiter-owned CRUD. GET accepts `q`, `mode`, and recruiter-only `mine=true`. |
-| `/api/applications`, `/api/applications/:id` | GET/POST, PUT/DELETE | Create and manage applications. DELETE withdraws the application and preserves the audit.       |
-| `/api/statuses`                              | GET                  | Populate the application status menu                                                            |
-| `/api/interviews`, `/api/interviews/:id`     | GET/POST, PUT/DELETE | View scoped interviews and manage recruiter-owned schedules                                     |
-| `/api/reports`, `/api/reports/:key`          | GET                  | List the ten views, fetch results, or add `?format=csv` or `?format=pdf`                        |
-| `/api/external`, `/api/external/import`      | GET, POST            | Read saved listings or fetch and upsert remote data as admin                                    |
+- Run `npm run check` and `npm start`.
+- Confirm `http://localhost:3000/api/health` returns status `ok`.
+- Register a new student, sign out, and sign back in.
+- Confirm guest requests cannot access applications/reports or create/edit records.
+- Sign in as the configured administrator and test posting create/edit/delete on a posting without applications. Confirm deleting a posting with applications returns HTTP 409.
+- Sign in as a student and test applying, viewing, editing the resume link and withdrawing an application.
+- On `/reports`, run all ten views, inspect the chart, and download both CSV and PDF.
+- Look up a location on the home page and confirm it is saved and can be loaded again. This test needs internet access for Open-Meteo.
+- Capture screenshots of successful examples and include them in the final report. Document team contributions and complete the contribution matrix required by the project sheet.
 
-The Phase II tables each begin with six or more records. The Phase III tables are populated by session and import activity. The status summary returns two rows on the original sample data because Interview Scheduled and Under Review tie at two applications each. Open the reports before mutating the sample data if you want to reproduce the report screenshots.
+## Development
 
-`npm test` checks all ten view outputs, permissions, validation, student and recruiter workflows, exports, a controlled external response, and logout. It never requests the live provider. Use the live Remote listings page for the external-connection check.
+`npm run dev` starts Node watch mode. Do not commit `.env`, real credentials, or personal data. A database backup is recommended before testing delete operations.

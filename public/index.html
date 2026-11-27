@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internship Recruitment</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/index.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="/">Internship Recruitment</a><nav><a href="/">Internships</a><a href="/reports">Reports & analytics</a></nav></header>
+  <main class="container">
+    <section class="hero"><p class="eyebrow">Ontario Tech • Student and recruiter portal</p><h1>Internship recruitment, connected.</h1><p>Browse opportunities, manage applications, and review recruitment data stored in PostgreSQL.</p><div id="health" class="notice" role="status">Checking database connection…</div></section>
+
+    <section class="panel" id="account-panel"><div class="section-heading"><div><h2>Account</h2><p id="account-status">You are browsing as a guest. Sign in or create a student account.</p></div></div>
+      <div id="auth-forms" class="two-column">
+        <form id="login-form" class="form-card"><h3>Sign in</h3><label>Email<input name="email" type="email" maxlength="255" required autocomplete="username"></label><label>Password<input name="password" type="password" required autocomplete="current-password"></label><button type="submit">Sign in</button></form>
+        <form id="register-form" class="form-card"><h3>Student registration</h3><div class="two-column"><label>First name<input name="firstName" maxlength="60" required></label><label>Last name<input name="lastName" maxlength="60" required></label></div><label>Email<input name="email" type="email" maxlength="255" required autocomplete="email"></label><label>Password (10 characters minimum)<input name="password" type="password" minlength="10" maxlength="200" required autocomplete="new-password"></label><label>Program<input name="program" maxlength="120" required></label><label>Expected graduation year<input name="expectedGradYear" type="number" min="2026" max="2035" required></label><button type="submit">Create student account</button></form>
+      </div>
+      <button id="logout-button" class="secondary" type="button" hidden>Sign out</button><div id="auth-message" class="notice" role="status" hidden></div>
+    </section>
+
+    <section class="panel"><div class="section-heading"><div><h2>Open internships</h2><p>Search and filter current postings. Sign in as a student to apply.</p></div></div>
+      <form id="search-form" class="filters"><label>Keyword, company, or location<input name="q" maxlength="100" placeholder="e.g. software, Toronto"></label><label>Work mode<select name="workMode"><option value="">Any mode</option><option>On-site</option><option>Hybrid</option><option>Remote</option></select></label><button type="submit">Search</button></form>
+      <div id="posting-message" class="notice" role="status"></div><div id="postings" class="cards" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="posting-admin" hidden><div class="section-heading"><div><h2>Manage internship postings</h2><p>Recruiters manage their own postings; administrators can manage postings for a selected recruiter.</p></div></div>
+      <form id="posting-form" class="form-grid"><input name="postingId" type="hidden"><label>Title<input name="title" maxlength="150" required></label><label>Employer<select name="employerId" required></select></label><label id="recruiter-field">Recruiter user ID<input name="recruiterId" type="number" min="1"></label><label>Location<input name="location" maxlength="120" required></label><label>Work mode<select name="workMode" required><option>On-site</option><option>Hybrid</option><option>Remote</option></select></label><label>Application deadline<input name="deadline" type="date" required></label><label>Minimum hourly salary<input name="minSalary" type="number" min="0" step="0.01"></label><label>Maximum hourly salary<input name="maxSalary" type="number" min="0" step="0.01"></label><label class="wide">Description<textarea name="description" maxlength="5000" rows="3" required></textarea></label><label class="wide">External URL<input name="externalUrl" type="url" maxlength="500"></label><div class="wide button-row"><button type="submit">Save posting</button><button id="clear-posting" class="secondary" type="button">Clear form</button><button id="delete-posting" class="secondary" type="button" hidden>Delete posting</button></div></form><div id="posting-admin-message" class="notice" role="status" hidden></div>
+      <div id="recruiter-admin" class="admin-subpanel" hidden><h3>Create recruiter account</h3><p>Create a recruiter linked to an employer. They can sign in with the email and password you set here.</p><form id="recruiter-form" class="form-grid"><label>First name<input name="firstName" maxlength="60" required></label><label>Last name<input name="lastName" maxlength="60" required></label><label>Email<input name="email" type="email" maxlength="255" required></label><label>Password (10 characters minimum)<input name="password" type="password" minlength="10" maxlength="200" required></label><label>Employer<select name="employerId" required></select></label><label>Job title<input name="jobTitle" maxlength="100"></label><button type="submit">Create recruiter</button></form><div id="recruiter-message" class="notice" role="status" hidden></div></div>
+    </section>
+
+    <section class="panel" id="applications-panel" hidden><div class="section-heading"><div><h2>Applications</h2><p id="application-description">Applications associated with your account.</p></div><button id="refresh-applications" type="button" class="secondary">Refresh</button></div><div id="application-message" class="notice" role="status"></div><div class="table-wrap"><table id="applications-table"><thead></thead><tbody></tbody></table></div></section>
+
+    <section class="panel"><div class="section-heading"><div><h2>Weather at a recruitment location</h2><p>Look up current conditions. Results from Open-Meteo are saved in PostgreSQL and can be loaded again.</p></div></div><form id="weather-form" class="filters"><label>City or location<input name="location" maxlength="120" minlength="2" value="Toronto, ON" required></label><button type="submit">Look up and save weather</button><button id="weather-history" class="secondary" type="button">Load saved results</button></form><div id="weather-message" class="notice" role="status"></div><div id="weather-results" class="cards"></div><p class="small-print">Weather data source: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a></p></section>
+  </main><footer>SOFE 3700U Data Management Systems • Phase III</footer>
+</body>
+</html>

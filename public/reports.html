@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Database Reports | Internship Recruitment</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/vendor/chart.js"></script><script defer src="/reports.js"></script>
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="/">Internship Recruitment</a><nav><a href="/">Internships</a><a href="/reports">Reports & analytics</a></nav></header>
+  <main class="container">
+    <section class="hero compact"><p class="eyebrow">Phase II views • Live PostgreSQL results</p><h1>Recruitment reports</h1><p>Run all ten project views, inspect their results, visualize application statuses, and export reports. Sign in as an administrator or recruiter on the <a href="/">home page</a> to access report data.</p></section>
+    <section class="panel"><div class="section-heading"><div><h2>Application status chart</h2><p>Current application counts grouped by status from the PostgreSQL database.</p></div></div><div class="chart-wrap"><canvas id="status-chart" aria-label="Applications by status"></canvas></div><div id="chart-message" class="notice" role="status">Loading chart data…</div></section>
+    <section class="panel"><div class="filters report-filter"><label for="view-select">Choose a report view<select id="view-select"></select></label><button id="load-view" type="button">Run view</button><button id="export-csv" class="secondary" type="button" disabled>Download CSV</button><button id="export-pdf" class="secondary" type="button" disabled>Download PDF</button></div>
+      <div id="report-message" class="notice" role="status">Select a view to load its results.</div><div class="table-wrap"><table id="results"><caption class="sr-only">Selected database view results</caption><thead></thead><tbody></tbody></table></div>
+    </section>
+  </main><footer>Report tables execute the ten Phase II views. PDF export is generated with PDFKit; CSV export is generated with csv-stringify.</footer>
+</body>
+</html>
