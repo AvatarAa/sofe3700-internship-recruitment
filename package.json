@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "check": "node --check src/server.js && node --check src/routes/api.js && node --check src/db.js && node --check public/index.js && node --check public/reports.js"
+    "check": "node --check src/server.js && node --check src/routes/api.js && node --check src/db.js && node --check public/index.js && node --check public/reports.js && node --check public/external-jobs.js"
   },
   "dependencies": {
     "chart.js": "^4.6.2",
